@@ -1,10 +1,5 @@
 node {
 
-   stage('Clone Repository') {
-        // Get some code from a GitHub repository
-        git 'https://github.com/zyihong/spring-petclinic.git'
-    
-   }
    stage('Build Maven Image') {
         docker.build("maven-build")
    }
