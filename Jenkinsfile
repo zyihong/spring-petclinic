@@ -1,24 +1,15 @@
-node {
-
-   stage('Build Maven Image') {
-        docker.build("maven-build")
-   }
-   
-   stage('Run Maven Container') {
-       
-        //Remove maven-build-container if it exists
-        sh " docker rm -f maven-build-container"
-        
-        //Run maven image
-        sh "docker run --rm --name maven-build-container maven-build"
-   }
-   
-   stage('Deploy Spring Boot Application') {
-        
-         //Remove maven-build-container if it exists
-        sh " docker rm -f java-deploy-container"
-       
-        sh "docker run --name java-deploy-container --volumes-from maven-build-container -d -p 8080:8080 denisdbell/petclinic-deploy"
-   }
-
+pipeline {
+    agent {
+        docker {
+            image 'maven:3-alpine' 
+            args '-v /root/.m2:/root/.m2' 
+        }
+    }
+    stages {
+        stage('Build') { 
+            steps {
+                sh 'mvn -B -DskipTests clean package' 
+            }
+        }
+    }
 }
